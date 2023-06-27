@@ -1,1 +1,1 @@
-# tablet-planner-app-backend
+# tablet-planner-backend
