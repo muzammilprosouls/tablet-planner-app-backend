@@ -39,6 +39,9 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server ${process.env.DEV_MODE} Running on ${PORT}`.bgCyan.white);
+})
 connectDb().then(() => {
     app.listen(PORT, () => {
         console.log(`Server ${process.env.DEV_MODE} Running on ${PORT}`.bgCyan.white);
