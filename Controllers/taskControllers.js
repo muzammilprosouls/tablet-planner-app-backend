@@ -1,19 +1,17 @@
 import taskModel from "../Models/taskModel.js";
 import userModel from "../Models/userModel.js";
 import notesModel from "../Models/notesModel.js";
+import fs from 'fs';
+import multer from "multer";
 
 export const createTasksController = async (req, res) => {
     try {
-        const { title, category, text } = req.body;
+        const { title, category, text, paths, recordings, image } = req.body;
+        // console.log(recordings)
         const userId = req.user._id;
         if (!title) {
             return res.status(401).send({
                 message: "Title is required",
-            });
-        }
-        if (!text) {
-            return res.status(401).send({
-                message: "There is Nothing to save",
             });
         }
         const existingUser = await userModel.findById(userId);
@@ -23,11 +21,36 @@ export const createTasksController = async (req, res) => {
                 message: "User not found",
             });
         }
+        console.log(image)
+        // const recordings = [];
+
+        // // Loop through the recording files
+        // for (const file of req.files) {
+        //     const fileBuffer = fs.readFileSync(file.path);
+        //     const base64Data = fileBuffer.toString("base64");
+
+        //     const recording = {
+        //         duration: file.originalname,
+        //         file: {
+        //             data: fileBuffer,
+        //             contentType: file.mimetype,
+        //         },
+        //     };
+
+        //     recordings.push(recording);
+
+        //     // Delete the temporary file
+        //     fs.unlinkSync(file.path);
+        // }
+        // const imageBuffer = fs.readFileSync(req.file.path);
         const task = await new taskModel({
             person: userId,
             title,
             category,
             text,
+            paths,
+            recordings,
+            image,
         }).save();
         res.status(201).send({
             success: true,
@@ -36,6 +59,9 @@ export const createTasksController = async (req, res) => {
                 _id: task._id,
                 title: task.title,
                 category: task.category,
+                paths: task.paths,
+                recordings: task.recordings,
+                image: task.image,
                 person: {
                     _id: existingUser._id,
                     name: existingUser.name,
