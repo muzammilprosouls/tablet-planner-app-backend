@@ -1,8 +1,8 @@
 import taskModel from "../Models/taskModel.js";
 import userModel from "../Models/userModel.js";
 import notesModel from "../Models/notesModel.js";
-import fs from 'fs';
-import multer from "multer";
+// import fs from 'fs';
+// import multer from "multer";
 
 export const createTasksController = async (req, res) => {
     try {
