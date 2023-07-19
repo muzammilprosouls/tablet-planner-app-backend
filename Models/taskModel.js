@@ -16,7 +16,7 @@ const taskSchema = new mongoose.Schema(
             required: true,
         },
         paths: {
-            type: [[String]],
+             type: [mongoose.Schema.Types.Mixed]
         },
         recordings: {
             type: [mongoose.Schema.Types.Mixed]
