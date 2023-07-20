@@ -92,3 +92,70 @@ export const getTasksController = async (req, res) => {
         });
     }
 }
+
+export const updateTaskController = async (req, res) => {
+    const { taskId } = req.params;
+    const { title, category, paths, recordings, image } = req.body;
+    try {
+        const existingTask = await taskModel.findById(taskId);
+
+        if (!existingTask) {
+            return res.status(404).json({
+                success: false,
+                message: "Activity not found",
+            });
+        }
+
+        const updatedTask = await taskModel.findByIdAndUpdate(
+            taskId,
+            {
+                title: title || existingTask.title,
+                category: category || existingTask.description,
+                paths: paths || existingTask.activity_type,
+                recordings: recordings || existingTask.duration,
+                image: image || existingTask.date,
+            },
+            { new: true }
+        );
+        console.log(updatedTask)
+        res.status(200).json({
+            success: true,
+            message: "Activity successfully updated",
+            task: updatedTask,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Error updating activity",
+            error,
+        });
+    }
+};
+
+export const deleteTaskController = async (req, res) => {
+    const { taskId } = req.params;
+
+    try {
+        const deletedTask = await taskModel.findByIdAndDelete(taskId);
+        if (!deletedTask) {
+            return res.status(404).json({
+                success: false,
+                message: "Activity not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Activity successfully deleted",
+            task: deletedTask,
+        });
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Error in deleting activity",
+            error,
+        });
+    }
+};
