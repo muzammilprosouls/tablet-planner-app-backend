@@ -95,7 +95,7 @@ export const getTasksController = async (req, res) => {
 
 export const updateTaskController = async (req, res) => {
     const { taskId } = req.params;
-    const { title, category, paths, recordings, image } = req.body;
+    const { title, text, category, paths, recordings, image } = req.body;
     try {
         const existingTask = await taskModel.findById(taskId);
 
@@ -110,10 +110,11 @@ export const updateTaskController = async (req, res) => {
             taskId,
             {
                 title: title || existingTask.title,
-                category: category || existingTask.description,
-                paths: paths || existingTask.activity_type,
-                recordings: recordings || existingTask.duration,
-                image: image || existingTask.date,
+                text: text || existingTask.text,
+                category: category || existingTask.category,
+                paths: paths || existingTask.paths,
+                recordings: recordings || existingTask.recordings,
+                image: image || existingTask.image,
             },
             { new: true }
         );
