@@ -6,8 +6,7 @@ import notesModel from "../Models/notesModel.js";
 
 export const createTasksController = async (req, res) => {
     try {
-        const { title, category, text, paths, recordings, image } = req.body;
-        // console.log(recordings)
+        const { title, category, text, paths, recordings, image, SelectedDate, priority } = req.body;
         const userId = req.user._id;
         if (!title) {
             return res.status(401).send({
@@ -21,7 +20,6 @@ export const createTasksController = async (req, res) => {
                 message: "User not found",
             });
         }
-        console.log(image)
         // const recordings = [];
 
         // // Loop through the recording files
@@ -51,6 +49,8 @@ export const createTasksController = async (req, res) => {
             paths,
             recordings,
             image,
+            date: SelectedDate,
+            priority
         }).save();
         res.status(201).send({
             success: true,
@@ -62,6 +62,8 @@ export const createTasksController = async (req, res) => {
                 paths: task.paths,
                 recordings: task.recordings,
                 image: task.image,
+                date: task.date,
+                priority: task.priority,
                 person: {
                     _id: existingUser._id,
                     name: existingUser.name,
@@ -95,7 +97,7 @@ export const getTasksController = async (req, res) => {
 
 export const updateTaskController = async (req, res) => {
     const { taskId } = req.params;
-    const { title, text, category, paths, recordings, image } = req.body;
+    const { title, text, category, paths, recordings, image, SelectedDate, priority } = req.body;
     try {
         const existingTask = await taskModel.findById(taskId);
 
@@ -105,7 +107,7 @@ export const updateTaskController = async (req, res) => {
                 message: "Activity not found",
             });
         }
-
+        const date = SelectedDate
         const updatedTask = await taskModel.findByIdAndUpdate(
             taskId,
             {
@@ -115,6 +117,8 @@ export const updateTaskController = async (req, res) => {
                 paths: paths || existingTask.paths,
                 recordings: recordings || existingTask.recordings,
                 image: image || existingTask.image,
+                date: date || existingTask.date,
+                priority: priority || existingTask.priority,
             },
             { new: true }
         );

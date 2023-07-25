@@ -16,7 +16,7 @@ const taskSchema = new mongoose.Schema(
             required: true,
         },
         paths: {
-             type: [mongoose.Schema.Types.Mixed]
+            type: [mongoose.Schema.Types.Mixed]
         },
         recordings: {
             type: [mongoose.Schema.Types.Mixed]
@@ -61,7 +61,14 @@ const taskSchema = new mongoose.Schema(
         ,
         text: {
             type: String,
+        },
+        date: {
+            type: Date,
+        },
+        priority: {
+            type: String
         }
+
 
     },
     { timestamps: true }
