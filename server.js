@@ -6,6 +6,7 @@ import connectDb from './config/db.js';
 import authRoute from './Routes/authRoute.js';
 import taskRoute from './Routes/taskRoute.js'
 import notesRoute from './Routes/notesRoute.js'
+import reminderRoute from './Routes/reminderRoute.js'
 import cors from 'cors';
 // import path from 'path'
 
@@ -29,6 +30,7 @@ app.use(morgan('dev'));
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/tasks", taskRoute);
 app.use("/api/v1/notes", notesRoute);
+app.use("/api/v1/reminder", reminderRoute);
 
 // app.use('*', function (req, res) {
 //     res.sendFile(path.join(__dirname, "./client/build/index.html"));
