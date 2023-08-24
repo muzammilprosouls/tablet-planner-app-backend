@@ -14,6 +14,7 @@ export async function sendNotification(user, reminder) {
     };
 
     const chunks = expo.chunkPushNotifications([message]);
+    const tickets = [];
     // Send the chunks to the Expo push notification service
     for (let chunk of chunks) {
         try {
