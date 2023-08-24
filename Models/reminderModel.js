@@ -6,6 +6,10 @@ const reminderSchema = new mongoose.Schema(
             type: mongoose.ObjectId,
             ref: "tasks",
         },
+        person: {
+            type: mongoose.ObjectId,
+            ref: "users",
+        },
         title: {
             type: String,
         },

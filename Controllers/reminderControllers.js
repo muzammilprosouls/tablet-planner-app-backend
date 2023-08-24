@@ -34,14 +34,15 @@ export const createReminderController = async (req, res) => {
             remiderDate: formattedDate,
             remiderTime: formattedtime,
             expotoken: expoPushToken,
+            person: userId
         }).save();
 
-        // Schedule a notification here
-        const user = await userModel.findById(userId);
-        if (user) {
-            // Pass necessary data to the sendNotification function
-            sendNotification(user, reminder);
-        }
+        // // Schedule a notification here
+        // const user = await userModel.findById(userId);
+        // if (user) {
+        //     // Pass necessary data to the sendNotification function
+        //     sendNotification(user, reminder);
+        // }
 
         res.status(201).send({
             success: true,
