@@ -54,10 +54,6 @@ const job = cron.schedule('* * * * *', async () => {
         console.log("date", formattedDate);
         console.log("time", formattedtime);
         // Query reminders from MongoDB where notification time matches the current time
-
-
-
-
         console.log('Cron job running at:', `${formattedDate}${formattedtime}`);
         const reminders = await reminderModel.find({
             remiderDate: formattedDate,
@@ -77,11 +73,11 @@ const job = cron.schedule('* * * * *', async () => {
     }
 });
 
-job.start();
+// job.start();
 const PORT = process.env.PORT || 8080;
 connectDb().then(() => {
     app.listen(PORT, () => {
         console.log(`Server ${process.env.DEV_MODE} Running on ${PORT}`.bgCyan.white);
+        job.start();
     })
 })
-
