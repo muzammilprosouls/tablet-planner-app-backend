@@ -4,15 +4,18 @@ import reminderModel from './Models/reminderModel.js';
 const expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
 
 export async function sendNotification(user, reminder) {
-    const { title, expotoken, remiderDate, remiderTime } = reminder;
+    const { title, expotoken, remiderDate, remiderTime, location } = reminder;
 
     const message = {
         to: expotoken,
         sound: 'default',
-        body: `Reminder: ${reminder.title}`,
+        body: `Reminder: ${reminder.title} \nLocation: ${formatLocation(reminder.location)}`,
         // ... other notification details
     };
-
+    function formatLocation(location) {
+        const { streetNumber, street, city, country } = location;
+        return `${streetNumber ? streetNumber + ' ' : ''}${street} ${city} ${country}`;
+    }
     const chunks = expo.chunkPushNotifications([message]);
     const tickets = [];
     // Send the chunks to the Expo push notification service

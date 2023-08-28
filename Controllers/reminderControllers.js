@@ -7,20 +7,9 @@ import { sendNotification } from "../notification-schedular.js";
 
 export const createReminderController = async (req, res) => {
     try {
-        const { taskId, taskTitle, formattedDate, formattedtime, expoPushToken } = req.body;
+        const { taskId, taskTitle, formattedDate, formattedtime, expoPushToken, tappedAddress } = req.body;
         const userId = req.user._id;
-        console.log("date", formattedDate);
-        console.log("time", formattedtime);
-        // if (!formattedDate) {
-        //     return res.status(401).send({
-        //         message: "Date is required",
-        //     });
-        // }
-        // if (!formattedtime) {
-        //     return res.status(401).send({
-        //         message: "Time is required",
-        //     });
-        // }
+        // console.log(tappedAddress)
         const existingUser = await userModel.findById(userId);
         if (!existingUser) {
             return res.status(404).send({
@@ -28,21 +17,29 @@ export const createReminderController = async (req, res) => {
                 message: "User not found",
             });
         }
+        const locationData = {
+            city: tappedAddress[0].city,
+            country: tappedAddress[0].country,
+            district: tappedAddress[0].district,
+            isoCountryCode: tappedAddress[0].isoCountryCode,
+            name: tappedAddress[0].name,
+            postalCode: tappedAddress[0].postalCode,
+            region: tappedAddress[0].region,
+            street: tappedAddress[0].street,
+            streetNumber: tappedAddress[0].streetNumber,
+            subregion: tappedAddress[0].subregion,
+            timezone: tappedAddress[0].timezone
+        };
+        console.log(locationData)
         const reminder = await new reminderModel({
             taskId,
             title: taskTitle,
             remiderDate: formattedDate,
             remiderTime: formattedtime,
             expotoken: expoPushToken,
+            location: locationData,
             person: userId
         }).save();
-
-        // // Schedule a notification here
-        // const user = await userModel.findById(userId);
-        // if (user) {
-        //     // Pass necessary data to the sendNotification function
-        //     sendNotification(user, reminder);
-        // }
 
         res.status(201).send({
             success: true,
@@ -50,10 +47,12 @@ export const createReminderController = async (req, res) => {
             reminder: {
                 _id: reminder._id,
                 taskId: reminder.taskId,
+                person: reminder.person,
                 title: reminder.title,
                 remiderDate: reminder.remiderDate,
                 remiderTime: reminder.remiderTime,
-                expotoken: reminder.expotoken
+                expotoken: reminder.expotoken,
+                location: reminder.location
             }
         });
     } catch (error) {
@@ -65,18 +64,3 @@ export const createReminderController = async (req, res) => {
         });
     }
 }
-// export async function getUpcomingReminders() {
-//     try {
-//         const currentTime = new Date();
-
-//         // Fetch reminders where reminderTime is greater than the current time
-//         const upcomingReminders = await ReminderModel.find({
-//             reminderTime: { $gt: currentTime },
-//         }).exec();
-
-//         return upcomingReminders;
-//     } catch (error) {
-//         console.error(error);
-//         throw error;
-//     }
-// }

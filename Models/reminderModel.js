@@ -24,6 +24,23 @@ const reminderSchema = new mongoose.Schema(
         expotoken: {
             type: String,
             required: true
+        },
+        // location: {
+        //     type: [String],
+
+        // }
+        location: {
+            city: String,
+            country: String,
+            district: String,
+            isoCountryCode: String,
+            name: String,
+            postalCode: String,
+            region: String,
+            street: String,
+            streetNumber: String,
+            subregion: String,
+            timezone: String
         }
     },
     { timestamps: true }
