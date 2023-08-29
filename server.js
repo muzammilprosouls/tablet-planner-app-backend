@@ -18,7 +18,7 @@ import userModel from './Models/userModel.js';
 dotenv.config();
 
 //config database
-connectDb();
+// connectDb();
 
 //rest object
 const app = express()
@@ -58,6 +58,9 @@ const job = cron.schedule('* * * * *', async () => {
             remiderDate: formattedDate,
             remiderTime: formattedtime
         });
+        if (!reminders) {
+            console.log(`No Reminder found for ${formattedDate} and ${formattedtime}`)
+        }
         console.log("reminder date and time", reminders)
         // Send notifications for matching reminders
         for (const reminder of reminders) {
@@ -72,11 +75,10 @@ const job = cron.schedule('* * * * *', async () => {
     }
 });
 
-// job.start();
+job.start();
 const PORT = process.env.PORT || 8080;
 connectDb().then(() => {
     app.listen(PORT, () => {
         console.log(`Server ${process.env.DEV_MODE} Running on ${PORT}`.bgCyan.white);
-        job.start();
     })
 })

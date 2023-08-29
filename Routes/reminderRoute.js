@@ -1,17 +1,15 @@
 import express from 'express';
 import { requireSignIn } from '../Middlewares/authMiddleware.js';
-import { createReminderController } from '../Controllers/reminderControllers.js';
+import { createReminderController, getRemindersController } from '../Controllers/reminderControllers.js';
 
 const router = express.Router()
 
 
 router.post('/create', requireSignIn, createReminderController)
 
-
+router.get("/user-reminders/:userId", getRemindersController);
 
 export default router;
-
-// router.get("/user-tasks/:userId", getTasksController);
 
 // router.put('/update-task/:taskId', requireSignIn, updateTaskController);
 

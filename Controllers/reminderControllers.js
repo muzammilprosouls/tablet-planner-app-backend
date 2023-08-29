@@ -17,20 +17,22 @@ export const createReminderController = async (req, res) => {
                 message: "User not found",
             });
         }
-        const locationData = {
-            city: tappedAddress[0].city,
-            country: tappedAddress[0].country,
-            district: tappedAddress[0].district,
-            isoCountryCode: tappedAddress[0].isoCountryCode,
-            name: tappedAddress[0].name,
-            postalCode: tappedAddress[0].postalCode,
-            region: tappedAddress[0].region,
-            street: tappedAddress[0].street,
-            streetNumber: tappedAddress[0].streetNumber,
-            subregion: tappedAddress[0].subregion,
-            timezone: tappedAddress[0].timezone
-        };
-        console.log(locationData)
+        let locationData = {};
+        if (tappedAddress && tappedAddress.length > 0) {
+            locationData = {
+                city: tappedAddress[0].city,
+                country: tappedAddress[0].country,
+                district: tappedAddress[0].district,
+                isoCountryCode: tappedAddress[0].isoCountryCode,
+                name: tappedAddress[0].name,
+                postalCode: tappedAddress[0].postalCode,
+                region: tappedAddress[0].region,
+                street: tappedAddress[0].street,
+                streetNumber: tappedAddress[0].streetNumber,
+                subregion: tappedAddress[0].subregion,
+                timezone: tappedAddress[0].timezone
+            };
+        }
         const reminder = await new reminderModel({
             taskId,
             title: taskTitle,
@@ -60,6 +62,21 @@ export const createReminderController = async (req, res) => {
         res.status(500).send({
             success: false,
             message: "Error in creating Tasks",
+            error,
+        });
+    }
+}
+
+export const getRemindersController = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const reminders = await reminderModel.find({ person: userId }).exec();
+        res.status(200).send(reminders);
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "Error in getting Tasks",
             error,
         });
     }
