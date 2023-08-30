@@ -1,6 +1,6 @@
 import taskModel from "../Models/taskModel.js";
 import userModel from "../Models/userModel.js";
-import notesModel from "../Models/notesModel.js";
+import notesModel from "../Models/tabsModel.js";
 import reminderModel from "../Models/reminderModel.js";
 import { sendNotification } from "../notification-schedular.js";
 
@@ -61,7 +61,7 @@ export const createReminderController = async (req, res) => {
         console.log(error);
         res.status(500).send({
             success: false,
-            message: "Error in creating Tasks",
+            message: "Error in creating Reminder",
             error,
         });
     }
@@ -76,7 +76,89 @@ export const getRemindersController = async (req, res) => {
         console.log(error)
         res.status(500).send({
             success: false,
-            message: "Error in getting Tasks",
+            message: "Error in getting Reminders",
+            error,
+        });
+    }
+}
+
+export const updateReminderController = async (req, res) => {
+    const { reminderId } = req.params;
+    const { taskId, taskTitle, formattedDate, formattedtime, expoPushToken, tappedAddress } = req.body;
+    try {
+        const existingreminder = await reminderModel.findById(reminderId);
+
+        if (!existingreminder) {
+            return res.status(404).json({
+                success: false,
+                message: "reminder not found",
+            });
+        }
+        let locationData = {};
+        if (tappedAddress && tappedAddress.length > 0) {
+            locationData = {
+                city: tappedAddress[0].city,
+                country: tappedAddress[0].country,
+                district: tappedAddress[0].district,
+                isoCountryCode: tappedAddress[0].isoCountryCode,
+                name: tappedAddress[0].name,
+                postalCode: tappedAddress[0].postalCode,
+                region: tappedAddress[0].region,
+                street: tappedAddress[0].street,
+                streetNumber: tappedAddress[0].streetNumber,
+                subregion: tappedAddress[0].subregion,
+                timezone: tappedAddress[0].timezone
+            };
+        }
+        const updatedReminder = await reminderModel.findByIdAndUpdate(
+            reminderId,
+            {
+                title: taskTitle || existingreminder.title,
+                remiderDate: formattedDate || existingreminder.remiderDate,
+                remiderTime: formattedtime || existingreminder.remiderTime,
+                expotoken: expoPushToken || existingreminder.expotoken,
+                location: locationData || existingreminder.location
+            },
+            { new: true }
+        );
+        console.log(updatedReminder)
+        res.status(200).json({
+            success: true,
+            message: "Reminder successfully updated",
+            reminder: updatedReminder,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Error updating Reminder",
+            error,
+        });
+    }
+};
+
+export const deleteReminderController = async (req, res) => {
+    const { reminderId } = req.params;
+
+    try {
+        const deletedReminder = await reminderModel.findByIdAndDelete(reminderId);
+        if (!deletedReminder) {
+            return res.status(404).json({
+                success: false,
+                message: "Reminder not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Reminder successfully deleted",
+            reminder: deletedReminder,
+        });
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: "Error in deleting Reminder",
             error,
         });
     }

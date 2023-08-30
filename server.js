@@ -3,11 +3,11 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDb from './config/db.js';
 import authRoute from './Routes/authRoute.js';
-import taskRoute from './Routes/taskRoute.js'
-import notesRoute from './Routes/notesRoute.js'
-import reminderRoute from './Routes/reminderRoute.js'
+import taskRoute from './Routes/taskRoute.js';
+import tabsRoute from './Routes/tabsRoute.js';
+import reminderRoute from './Routes/reminderRoute.js';
 import cors from 'cors';
-import * as cron from 'node-cron'
+import * as cron from 'node-cron';
 import { sendNotification } from './notification-schedular.js';
 import reminderModel from './Models/reminderModel.js';
 import userModel from './Models/userModel.js';
@@ -32,7 +32,7 @@ app.use(morgan('dev'));
 //routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/tasks", taskRoute);
-app.use("/api/v1/notes", notesRoute);
+app.use("/api/v1/tabs", tabsRoute);
 app.use("/api/v1/reminder", reminderRoute);
 
 // app.use('*', function (req, res) {

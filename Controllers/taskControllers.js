@@ -1,6 +1,6 @@
 import taskModel from "../Models/taskModel.js";
 import userModel from "../Models/userModel.js";
-import notesModel from "../Models/notesModel.js";
+import notesModel from "../Models/tabsModel.js";
 // import fs from 'fs';
 // import multer from "multer";
 

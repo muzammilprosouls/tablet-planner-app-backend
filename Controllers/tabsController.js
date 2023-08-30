@@ -1,8 +1,8 @@
-import notesModel from "../Models/notesModel.js";
+import tabsModel from "../Models/tabsModel.js";
 
-export const getNotesController = async (req, res) => {
+export const getTabsController = async (req, res) => {
     try {
-        const notes = await notesModel.find({}); // Retrieve all notes using an empty query
+        const notes = await tabsModel.find({}); // Retrieve all notes using an empty query
 
         res.status(200).json({
             success: true,
