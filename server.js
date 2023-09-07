@@ -49,7 +49,7 @@ const job = cron.schedule('* * * * *', async () => {
         const currentDate = new Date();
         const currentTime = new Date();
         const formattedDate = (`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`);
-        const formattedtime = `T${currentTime.getHours()}:${currentTime.getMinutes().toString().padStart(2, '0')}:00.000Z`;
+        const formattedtime = `T${currentTime.getUTCHours()}:${currentTime.getUTCMinutes().toString().padStart(2, '0')}:00.000Z`;
         console.log("date", formattedDate);
         console.log("time", formattedtime);
         // Query reminders from MongoDB where notification time matches the current time

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const tabsSchema = new mongoose.Schema(
     {
-        title: {
+        label: {
             type: String,
             required: true,
         },
@@ -10,7 +10,7 @@ const tabsSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        backgroundImage: {
+        Imagebackground: {
             type: String,
             required: true
         },
