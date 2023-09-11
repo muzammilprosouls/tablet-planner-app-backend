@@ -1,5 +1,6 @@
 import tabsModel from "../Models/tabsModel.js";
 import userModel from "../Models/userModel.js";
+import taskModel from "../Models/taskModel.js"
 
 export const createTabsController = async (req, res) => {
     try {
@@ -12,6 +13,16 @@ export const createTabsController = async (req, res) => {
                 message: "User not found",
             });
         }
+        console.log(tablabel);
+        const existingTab = await tabsModel.findOne({ label: tablabel, person: userId });
+
+        if (existingTab) {
+            return res.status(400).send({
+                success: false,
+                message: "Tab with the same label already exists",
+            });
+        }
+
         const tab = await new tabsModel({
             label: tablabel,
             color: tabcolor,
@@ -38,7 +49,8 @@ export const createTabsController = async (req, res) => {
             error,
         });
     }
-}
+};
+
 export const getTabsController = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -90,25 +102,27 @@ export const updateTabController = async (req, res) => {
         });
     }
 };
+
 export const deleteTabController = async (req, res) => {
     const { tabId } = req.params;
 
     try {
         const deletedTab = await tabsModel.findByIdAndDelete(tabId);
-        console.log(deletedTab);
         if (!deletedTab) {
             return res.status(404).json({
                 success: false,
                 message: "Tab not found",
             });
         }
-
+        const deletedTasks = await taskModel.deleteMany({ category: deletedTab.label });
         res.status(200).json({
             success: true,
-            message: "Tab successfully deleted",
+            message: "Tab and associated tasks successfully deleted",
             tab: deletedTab,
+            deletedTasks: deletedTasks.deletedCount,
         });
     } catch (error) {
+        console.error(error);
         res.status(500).send({
             success: false,
             message: "Error in deleting Tab",
