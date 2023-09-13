@@ -23,6 +23,7 @@
     "slugify": "^1.6.6"
   },
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error no test specified\" && exit 1"
   }
 }
