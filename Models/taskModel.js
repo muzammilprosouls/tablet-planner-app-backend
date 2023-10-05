@@ -6,6 +6,10 @@ const taskSchema = new mongoose.Schema(
             type: mongoose.ObjectId,
             ref: "users",
         },
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
         title: {
             type: String,
             required: true,
@@ -57,8 +61,7 @@ const taskSchema = new mongoose.Schema(
         // ],
         image: {
             type: [mongoose.Schema.Types.Mixed]
-        }
-        ,
+        },
         text: {
             type: String,
         },

@@ -1,6 +1,7 @@
 import userModel from '../Models/userModel.js';
 import { comparePassword, hashPassword } from "../Helper/authHelper.js";
 import JWT from "jsonwebtoken";
+import tabsModel from '../Models/tabsModel.js';
 
 export const registerController = async (req, res) => {
     try {
@@ -33,10 +34,171 @@ export const registerController = async (req, res) => {
             password: hashedPassword
         }).save();
 
+        const predefinedTabs = [
+            {
+                label: "CAR-MILAGE",
+                color: "#E0E0CE",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/CAR-MILAGE.jpg",
+                logs: false
+            },
+            {
+                label: "ACTIVITY LOG",
+                color: "#5A5A10",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/Activity-Log.jpg",
+                logs: false
+            },
+            {
+                label: "CHECK REGISTER",
+                color: "#B86FD6",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/Note1.jpg",
+                logs: false
+            },
+
+            {
+                label: "EQUIPMENT MAINTENANCE LOG",
+                color: "#1E64A6",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/Note1.jpg",
+                logs: false
+            },
+
+            {
+                label: "EXERCISE LOG",
+                color: "#6A8CB0",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/Exercise-log.jpg",
+                logs: false
+            },
+
+            {
+                label: "GROCERY LIST",
+                color: "#63DBD9",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/Note1.jpg",
+                logs: false
+            },
+
+            {
+                label: "MEDICAL INFORMATION",
+                color: "#AD343E",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/medical-information.jpg",
+                logs: false
+            },
+
+            {
+                label: "MEDICAL RECORD",
+                color: "#474747",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/MEDICAL-EXAMINATION.jpg",
+                logs: false
+            },
+
+            {
+                label: "MEETING PLANNER",
+                color: "#F2AF29",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/meeting.jpg",
+                logs: false
+            },
+            {
+                label: "MEETING PREP",
+                color: "#b94b8a",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/MEDICAL-EXAMINATION.jpg",
+                logs: false
+            },
+
+            {
+                label: "MONTHLY BUDGET WORKSHEET",
+                color: "#1E64A6",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/monthly-budget-worksheet.jpg",
+                logs: false
+            },
+
+            {
+                label: "MONTHLY BUDGET WORKSHEET 2",
+                color: "#5A5A10",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/monthly-budget-worksheet.jpg",
+                logs: false
+            },
+
+            {
+                label: "MONTHLY EXPENSE TRACKER",
+                color: "#00BA70",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/planner-forms-01.jpg",
+                logs: false
+            },
+
+            {
+                label: "PERSONAL INFORMATION",
+                color: "#90124F",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/personal-information.jpg",
+                logs: false
+            },
+
+            {
+                label: "PERSONAL PROPERTY RECORD",
+                color: "#6A8CB0",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/planner-forms-04.jpg",
+                logs: false
+            },
+
+            {
+                label: "TRAVEL ITINERARY",
+                color: "#B86FD6",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/planner-forms-05.jpg",
+                logs: false
+            },
+            {
+                label: "TRAVEL ITINERARY 2",
+                color: "#DAB554",
+                is_active: false,
+                is_system_generated: true,
+                Imagebackground: "https://tabletplanner.prosoulsinc.com/assets/planner-forms-05.jpg",
+                logs: false
+            }
+        ];
+
+        for (const tabData of predefinedTabs) {
+            const tab = await new tabsModel({
+                ...tabData,
+                person: user._id
+            }).save();
+            console.log(tab);
+        }
+
+        // Respond with registration success
         res.status(201).send({
             success: true,
             message: "User Register Successfully",
             user,
+            predefinedTabs
         });
     } catch (error) {
         console.log(error);
@@ -181,3 +343,17 @@ export const updateProfileController = async (req, res) => {
         });
     }
 };
+
+// export const getUsersController = async (req, res) => {
+//     try {
+//         const Users = await userModel.find().exec();
+//         res.status(200).send(Users)
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send({
+//             sucess: false,
+//             message: "Error in getting users",
+//             error,
+//         });
+//     }
+// }

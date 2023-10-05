@@ -4,7 +4,8 @@ import taskModel from "../Models/taskModel.js"
 
 export const createTabsController = async (req, res) => {
     try {
-        const { tablabel, tabcolor, Imagebackground } = req.body;
+        const { tablabel, tabcolor, Imagebackground, showlogs, is_active, is_system_generated } = req.body;
+        // const is_system_generated = false;
         const userId = req.user._id;
         const existingUser = await userModel.findById(userId);
         if (!existingUser) {
@@ -13,23 +14,33 @@ export const createTabsController = async (req, res) => {
                 message: "User not found",
             });
         }
-        console.log(tablabel);
-        const existingTab = await tabsModel.findOne({ label: tablabel, person: userId });
-
+        const existingTab = await tabsModel.findOne({
+            // label: tablabel,
+            // $or: [
+            //     { person: userId },
+            //     { person: null }
+            // ]
+            $and: [
+                { label: tablabel },
+                { person: userId }
+            ]
+        });
         if (existingTab) {
             return res.status(400).send({
                 success: false,
                 message: "Tab with the same label already exists",
             });
         }
-
         const tab = await new tabsModel({
             label: tablabel,
             color: tabcolor,
             Imagebackground,
+            is_active,
+            is_system_generated,
+            logs: showlogs,
             person: userId
         }).save();
-
+        console.log(tab)
         res.status(201).send({
             success: true,
             message: "Tab Successfully created",
@@ -38,6 +49,8 @@ export const createTabsController = async (req, res) => {
                 label: tab.label,
                 color: tab.color,
                 Imagebackground: tab.Imagebackground,
+                is_active,
+                is_system_generated,
                 person: tab.person,
             }
         });
@@ -50,11 +63,11 @@ export const createTabsController = async (req, res) => {
         });
     }
 };
-
 export const getTabsController = async (req, res) => {
     try {
         const { userId } = req.params;
         const Tabs = await tabsModel.find({ person: userId }).exec();
+        // const Tabs = await tabsModel.find({ $or: [{ person: userId }, { person: null }] }).exec();
         res.status(200).send(Tabs);
     } catch (error) {
         console.log(error);
@@ -65,10 +78,24 @@ export const getTabsController = async (req, res) => {
         });
     }
 };
-
+export const getSystemTabsController = async (req, res) => {
+    try {
+        // const { userId } = req.params;
+        const Tabs = await tabsModel.find({ person: null }).exec();
+        res.status(200).send(Tabs);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Error in getting Tabs",
+            error: error.message,
+        });
+    }
+};
 export const updateTabController = async (req, res) => {
     const { tabId } = req.params;
-    const { tablabel, tabcolor, Imagebackground } = req.body;
+    const { tablabel, tabcolor, Imagebackground, is_active, is_system_generated, showlogs } = req.body;
+    console.log("clg active", is_active)
     try {
         const existingTab = await tabsModel.findById(tabId);
         if (!existingTab) {
@@ -82,7 +109,10 @@ export const updateTabController = async (req, res) => {
             {
                 label: tablabel || existingTab.label,
                 color: tabcolor || existingTab.color,
-                Imagebackground: Imagebackground || existingTab.Imagebackground
+                Imagebackground: Imagebackground || existingTab.Imagebackground,
+                is_system_generated: is_system_generated || existingTab.is_system_generated,
+                is_active: is_active,
+                logs: showlogs
             },
             { new: true }
         );
@@ -102,7 +132,6 @@ export const updateTabController = async (req, res) => {
         });
     }
 };
-
 export const deleteTabController = async (req, res) => {
     const { tabId } = req.params;
 

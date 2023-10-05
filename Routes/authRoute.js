@@ -24,4 +24,6 @@ router.get("/user-auth", requireSignIn, (req, res) => {
 
 router.put('/profile', requireSignIn, updateProfileController)
 
+// router.get('/getusers', getUsersController)
+
 export default router;

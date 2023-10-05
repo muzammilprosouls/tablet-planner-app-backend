@@ -14,10 +14,24 @@ const tabsSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        is_active: {
+            type: Boolean,
+        },
+        is_system_generated: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+        logs: {
+            type: Boolean,
+        },
         person: {
             type: mongoose.ObjectId,
             ref: "users",
         }
+    },
+    {
+        timestamps: true
     }
 )
 

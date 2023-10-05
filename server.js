@@ -6,6 +6,7 @@ import authRoute from './Routes/authRoute.js';
 import taskRoute from './Routes/taskRoute.js';
 import tabsRoute from './Routes/tabsRoute.js';
 import reminderRoute from './Routes/reminderRoute.js';
+import contactRoute from './Routes/contactRoute.js';
 import cors from 'cors';
 import * as cron from 'node-cron';
 import { sendNotification } from './notification-schedular.js';
@@ -34,6 +35,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/tasks", taskRoute);
 app.use("/api/v1/tabs", tabsRoute);
 app.use("/api/v1/reminder", reminderRoute);
+app.use("/api/v1/contact", contactRoute);
 
 // app.use('*', function (req, res) {
 //     res.sendFile(path.join(__dirname, "./client/build/index.html"));
