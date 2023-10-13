@@ -4,12 +4,12 @@ import reminderModel from './Models/reminderModel.js';
 const expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
 
 export async function sendNotification(user, reminder) {
-    const { title, expotoken, remiderDate, remiderTime, location } = reminder;
+    const { title, expotoken, selectedSlot, StartingTime, EndingTime, location } = reminder;
 
     const message = {
         to: expotoken,
         sound: 'default',
-        body: `Reminder: ${reminder.title}${reminder.location && reminder.location.city ? `\nLocation: ${formatLocation(reminder.location)}` : ''}`,
+        body: `Appointment: ${reminder.title}\nAppointment:${selectedSlot.slotTitle}\n${reminder.location && reminder.location.city ? `\nLocation: ${formatLocation(reminder.location)}` : ''}`,
         // ... other notification details
     };
     function formatLocation(location) {

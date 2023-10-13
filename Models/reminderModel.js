@@ -13,13 +13,20 @@ const reminderSchema = new mongoose.Schema(
         title: {
             type: String,
         },
-        remiderDate: {
+
+        StartingTime: {
             type: String,
             required: true,
         },
-        remiderTime: {
+        EndingTime: {
             type: String,
             required: true,
+        },
+        selectedSlot: {
+            id: Number,
+            slotTitle: String,
+            StartingTime: String,
+            EndingTime: String,
         },
         expotoken: {
             type: String,

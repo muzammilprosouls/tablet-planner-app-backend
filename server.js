@@ -49,21 +49,28 @@ app.get('/', (req, res) => {
 const job = cron.schedule('* * * * *', async () => {
     try {
         const currentDate = new Date();
-        const currentTime = new Date();
-        const formattedDate = (`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`);
-        const formattedtime = `T${currentTime.getUTCHours()}:${currentTime.getUTCMinutes().toString().padStart(2, '0')}:00.000Z`;
-        console.log("date", formattedDate);
-        console.log("time", formattedtime);
+        currentDate.setUTCMilliseconds(0);
+        currentDate.setUTCSeconds(0);
+        const DateandTime = currentDate.toISOString();
+        // const currentTime = new Date();
+        // const formattedDate = (`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`);
+        // const formattedtime = `T${currentTime.getUTCHours().toString().padStart(2, '0')}:${currentTime.getUTCMinutes().toString().padStart(2, '0')}:00.000Z`;
+        // console.log("date", formattedDate);
+        // console.log("time", formattedtime);
         // Query reminders from MongoDB where notification time matches the current time
-        console.log('Cron job running at:', `${formattedDate}${formattedtime}`);
+        console.log('Cron job running at:', `${DateandTime}`);
         const reminders = await reminderModel.find({
-            remiderDate: formattedDate,
-            remiderTime: formattedtime
+            // remiderDate: formattedDate,
+            $or: [
+                { StartingTime: DateandTime },
+                { EndingTime: DateandTime }
+            ]
         });
-        if (!reminders) {
-            console.log(`No Reminder found for ${formattedDate} and ${formattedtime}`)
+        if (!reminders || reminders.length === 0) {
+            console.log(`No Reminder found for ${DateandTime}`)
+        } else {
+            console.log("reminder date and time", reminders)
         }
-        console.log("reminder date and time", reminders)
         // Send notifications for matching reminders
         for (const reminder of reminders) {
             const user = await userModel.findById(reminder.person);

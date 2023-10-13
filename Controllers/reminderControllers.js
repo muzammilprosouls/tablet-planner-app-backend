@@ -7,14 +7,35 @@ import { sendNotification } from "../notification-schedular.js";
 
 export const createReminderController = async (req, res) => {
     try {
-        const { taskId, taskTitle, formattedDate, formattedtime, expoPushToken, tappedAddress } = req.body;
+        const { taskId, taskTitle,
+            // formattedDate,
+            // StartingTime, EndingTime,
+            converted, selectedSlot, expoPushToken, tappedAddress } = req.body;
         const userId = req.user._id;
+
         // console.log(tappedAddress)
+        // console.log(formattedDate, "date");
+        // console.log(StartingTime, "STime");
+        // console.log(EndingTime, "ETime");
+        console.log(converted)
         const existingUser = await userModel.findById(userId);
         if (!existingUser) {
             return res.status(404).send({
                 success: false,
                 message: "User not found",
+            });
+        }
+        const appointmentClash = await reminderModel.findOne({
+            person: userId,
+            // remiderDate: formattedDate,
+            StartingTime: converted.startingTime,
+            EndingTime: converted.endingTime,
+        });
+        console.log(appointmentClash, "clashdoc")
+        if (appointmentClash) {
+            return res.status(400).send({
+                success: false,
+                message: "Appointment already exists for this time slot",
             });
         }
         let locationData = {};
@@ -36,8 +57,10 @@ export const createReminderController = async (req, res) => {
         const reminder = await new reminderModel({
             taskId,
             title: taskTitle,
-            remiderDate: formattedDate,
-            remiderTime: formattedtime,
+            // remiderDate: formattedDate,
+            StartingTime: converted.startingTime,
+            EndingTime: converted.endingTime,
+            selectedSlot,
             expotoken: expoPushToken,
             location: locationData,
             person: userId
@@ -51,8 +74,10 @@ export const createReminderController = async (req, res) => {
                 taskId: reminder.taskId,
                 person: reminder.person,
                 title: reminder.title,
-                remiderDate: reminder.remiderDate,
-                remiderTime: reminder.remiderTime,
+                selectedSlot: reminder.selectedSlot,
+                // remiderDate: reminder.remiderDate,
+                StartingTime: reminder.StartingTime,
+                EndingTime: reminder.EndingTime,
                 expotoken: reminder.expotoken,
                 location: reminder.location
             }
@@ -65,7 +90,7 @@ export const createReminderController = async (req, res) => {
             error,
         });
     }
-}
+};
 
 export const getRemindersController = async (req, res) => {
     const { userId } = req.params;
@@ -80,11 +105,16 @@ export const getRemindersController = async (req, res) => {
             error,
         });
     }
-}
+};
 
 export const updateReminderController = async (req, res) => {
     const { reminderId } = req.params;
-    const { taskId, taskTitle, formattedDate, formattedtime, expoPushToken, tappedAddress } = req.body;
+    const { taskId, taskTitle,
+        // formattedDate,
+        // StartingTime, EndingTime,
+        converted, selectedSlot, expoPushToken, tappedAddress } = req.body;
+    console.log(converted, "clg")
+    const userId = req.user._id;
     try {
         const existingreminder = await reminderModel.findById(reminderId);
 
@@ -92,6 +122,19 @@ export const updateReminderController = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: "reminder not found",
+            });
+        }
+        const appointmentClash = await reminderModel.findOne({
+            person: userId,
+            // remiderDate: formattedDate,
+            StartingTime: converted.startingTime,
+            EndingTime: converted.endingTime,
+        });
+        console.log(appointmentClash, "clashdoc")
+        if (appointmentClash) {
+            return res.status(400).send({
+                success: false,
+                message: "Appointment already exists for this time slot",
             });
         }
         let locationData = {};
@@ -114,8 +157,11 @@ export const updateReminderController = async (req, res) => {
             reminderId,
             {
                 title: taskTitle || existingreminder.title,
-                remiderDate: formattedDate || existingreminder.remiderDate,
-                remiderTime: formattedtime || existingreminder.remiderTime,
+                selectedSlot: selectedSlot || existingreminder.selectedSlot,
+                StartingTime: converted.startingTime || existingreminder.StartingTime,
+                EndingTime: converted.endingTime || existingreminder.EndingTime,
+                // remiderDate: formattedDate || existingreminder.remiderDate,
+                // remiderTime: formattedtime || existingreminder.remiderTime,
                 expotoken: expoPushToken || existingreminder.expotoken,
                 location: locationData || existingreminder.location
             },
@@ -162,4 +208,4 @@ export const deleteReminderController = async (req, res) => {
             error,
         });
     }
-}
+};
