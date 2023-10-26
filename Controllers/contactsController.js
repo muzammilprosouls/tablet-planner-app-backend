@@ -5,10 +5,12 @@ export const saveimportedcontacts = async (req, res) => {
         const contacts = req.body.savecontacts;
         const userId = req.user._id;
         const existingContacts = await contactModel.find({ person: userId });
-        console.log(contacts[0].addresses);
-
+        const filteredContacts = contacts.filter(contact => {
+            return existingContacts.every(existingContact =>
+                contact.lookupKey !== existingContact.contactId
+            );
+        });
         const concatenateAddressFields = (address) => {
-
             const cleanedStreet = address.street.replace(/\n/g, '');
             const fieldsToConcatenate = [
                 cleanedStreet,
@@ -20,19 +22,23 @@ export const saveimportedcontacts = async (req, res) => {
         };
 
         // Add userId to each contact object
-        if (existingContacts.length === 0) {
-            // If no existing contacts, proceed to save new contacts
-            const contactsWithUserId = contacts.map(contact => ({
-                ...contact,
-                person: userId,
-                contactId: contact.id || undefined, // Use 'id' if provided, else undefined (let Mongoose generate)
-                addresses: contact.addresses.map(address => ({
-                    address: concatenateAddressFields(address), // Concatenate and store address as a single string
-                })),
-            }));
+        if (filteredContacts.length > 0) {
+            const contactsWithUserId = filteredContacts.map(contact => {
+                const addresses = Array.isArray(contact.addresses)
+                    ? contact.addresses.map(address => ({
+                        addre: concatenateAddressFields(address),
+                        label: address.label,
+                    }))
+                    : [];
 
+                return {
+                    ...contact,
+                    person: userId,
+                    contactId: contact.lookupKey || contact.id || undefined,
+                    addresses,
+                };
+            });
             const savedContacts = await contactModel.insertMany(contactsWithUserId);
-
             return res.status(201).send({
                 success: true,
                 message: 'Contacts saved successfully.',
@@ -40,21 +46,21 @@ export const saveimportedcontacts = async (req, res) => {
             });
         } else {
             // If existing contacts found, return an error message
-            return res.status(400).send({
+            return res.status(409).send({
                 success: false,
-                message: 'Contacts already exist for this user.',
+                message: `No New Contacts to Import`,
             });
         }
     } catch (error) {
         console.error('Error while saving contacts:', error);
         res.status(500).json({ error: 'Failed to save contacts.' });
     };
-}
+};
 export const createContactsController = async (req, res) => {
     try {
-        const { firstName, lastName, company, address, emails, phoneNumbers, displayimg, name, note, dob } = req.body;
+        const { firstName, lastName, company, address, emails, phoneNumbers, displayimg, name, note, dob, customfield } = req.body;
         const userId = req.user._id;
-        console.log("create Note", dob)
+
         if (!firstName) {
             return res.status(401).send({
                 message: "First Name is required",
@@ -78,6 +84,7 @@ export const createContactsController = async (req, res) => {
             name,
             note,
             birthday: dob,
+            customfield,
             person: userId,
         }).save();
         res.status(201).send({
@@ -93,7 +100,7 @@ export const createContactsController = async (req, res) => {
             error,
         });
     }
-}
+};
 export const getContactController = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -107,13 +114,12 @@ export const getContactController = async (req, res) => {
             error: error.message,
         });
     }
-}
+};
 export const updateContactController = async (req, res) => {
     try {
         const { contactId } = req.params;
-        const { firstName, lastName, company, address, emails, phoneNumbers, displayimg, name, note, dob } = req.body;
+        const { firstName, lastName, company, address, emails, phoneNumbers, displayimg, name, note, dob, customfield } = req.body;
         const existingContact = await contactModel.findById(contactId);
-        console.log("dob", dob)
         if (!existingContact) {
             return res.status(404).json({
                 success: false,
@@ -135,7 +141,8 @@ export const updateContactController = async (req, res) => {
                 rawImage: rawImage || existingContact.rawImage,
                 name: name || existingContact.name,
                 note: note || existingContact.note,
-                birthday: birthday || existingContact.birthday
+                birthday: birthday || existingContact.birthday,
+                customfield: customfield || existingContact.customfield
             },
             { new: true }
         );
@@ -154,7 +161,7 @@ export const updateContactController = async (req, res) => {
             error,
         });
     }
-}
+};
 export const deleteContactController = async (req, res) => {
     try {
         const { contactId } = req.params;
@@ -178,4 +185,4 @@ export const deleteContactController = async (req, res) => {
             error,
         });
     }
-}
+};

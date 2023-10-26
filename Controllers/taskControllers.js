@@ -6,8 +6,9 @@ import notesModel from "../Models/tabsModel.js";
 
 export const createTasksController = async (req, res) => {
     try {
-        const { title, category, text, paths, recordings, image, SelectedDate, priority } = req.body;
+        const { title, category, text, paths, recordings, image, SelectedDate, priority, doc } = req.body;
         const userId = req.user._id;
+        console.log(recordings, "recordings")
         if (!title) {
             return res.status(401).send({
                 message: "Title is required",
@@ -20,6 +21,7 @@ export const createTasksController = async (req, res) => {
                 message: "User not found",
             });
         }
+        console.log(doc)
         // const recordings = [];
 
         // // Loop through the recording files
@@ -49,6 +51,7 @@ export const createTasksController = async (req, res) => {
             paths,
             recordings,
             image,
+            doc,
             date: SelectedDate,
             priority
         }).save();
@@ -64,6 +67,7 @@ export const createTasksController = async (req, res) => {
                 image: task.image,
                 date: task.date,
                 priority: task.priority,
+                doc: task.doc,
                 person: {
                     _id: existingUser._id,
                     name: existingUser.name,
@@ -97,7 +101,7 @@ export const getTasksController = async (req, res) => {
 
 export const updateTaskController = async (req, res) => {
     const { taskId } = req.params;
-    const { title, text, category, paths, recordings, image, SelectedDate, priority } = req.body;
+    const { title, text, category, paths, recordings, image, SelectedDate, priority, doc } = req.body;
     try {
         const existingTask = await taskModel.findById(taskId);
 
@@ -119,6 +123,7 @@ export const updateTaskController = async (req, res) => {
                 image: image || existingTask.image,
                 date: date || existingTask.date,
                 priority: priority || existingTask.priority,
+                doc: doc || existingTask.doc
             },
             { new: true }
         );

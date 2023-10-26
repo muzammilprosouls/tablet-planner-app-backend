@@ -5,12 +5,9 @@ const emailSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    label: {
-        type: String,
-    },
-    id: {
-        type: String,
-    },
+    label: String,
+    id: String,
+
 });
 const phoneNumberSchema = new mongoose.Schema({
     countryCode: {
@@ -25,8 +22,9 @@ const phoneNumberSchema = new mongoose.Schema({
     },
     number: {
         type: String,
-        required: true
-    }
+        // required: true
+    },
+    id: String
 });
 // const addressSchema = new mongoose.Schema({
 //     city: String,
@@ -56,8 +54,13 @@ const contactSchema = new mongoose.Schema(
         name: {
             type: String,
         },
+        // addresses: [{
+        //     address: String,
+        // }],
         addresses: [{
-            address: String,
+            id: String,
+            label: String,
+            addre: String,
         }],
         emails: [emailSchema],
         rawImage: {
@@ -81,6 +84,11 @@ const contactSchema = new mongoose.Schema(
             day: String,
             year: Number
         },
+        customfield: [{
+            id: String,
+            label: String,
+            value: String
+        }],
         person: {
             type: mongoose.ObjectId,
             ref: "users",

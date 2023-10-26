@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
-
+// const docSchema = new mongoose.Schema({
+//     mimeType: String,
+//     name: String,
+//     size: Number,
+//     type: String,
+//     uri: String,
+// });
 const taskSchema = new mongoose.Schema(
     {
         person: {
@@ -70,9 +76,10 @@ const taskSchema = new mongoose.Schema(
         },
         priority: {
             type: String
-        }
-
-
+        },
+        doc: {
+            type: Object,
+        },
     },
     { timestamps: true }
 )
