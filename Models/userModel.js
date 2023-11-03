@@ -7,6 +7,9 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        role: {
+            type: Boolean
+        },
         email: {
             type: String,
             required: true,
@@ -20,8 +23,12 @@ const userSchema = new mongoose.Schema(
         DOB: {
             type: Date,
         },
-        plan: {
-            type: String
+        plans: {
+            type: mongoose.ObjectId,
+            ref: "Plans",
+        },
+        is_Active: {
+            type: Boolean
         }
     },
     { timestamps: true }

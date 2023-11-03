@@ -7,6 +7,7 @@ import taskRoute from './Routes/taskRoute.js';
 import tabsRoute from './Routes/tabsRoute.js';
 import reminderRoute from './Routes/reminderRoute.js';
 import contactRoute from './Routes/contactRoute.js';
+import adminRoute from './Routes/adminRoute.js';
 import cors from 'cors';
 import * as cron from 'node-cron';
 import { sendNotification } from './notification-schedular.js';
@@ -25,13 +26,16 @@ dotenv.config();
 const app = express()
 
 //middlewares
-app.use(cors());
+app.use(cors(
+    // { origin: process.env.CORS_ORIGIN,}
+));
 app.use(express.json());
 app.use(morgan('dev'));
 // app.use(express.static(path.join(__dirname, './client/build')))
 
 //routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/tasks", taskRoute);
 app.use("/api/v1/tabs", tabsRoute);
 app.use("/api/v1/reminder", reminderRoute);

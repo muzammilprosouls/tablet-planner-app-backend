@@ -23,6 +23,7 @@ export const saveimportedcontacts = async (req, res) => {
 
         // Add userId to each contact object
         if (filteredContacts.length > 0) {
+            console.log("first")
             const contactsWithUserId = filteredContacts.map(contact => {
                 const addresses = Array.isArray(contact.addresses)
                     ? contact.addresses.map(address => ({
@@ -45,6 +46,7 @@ export const saveimportedcontacts = async (req, res) => {
                 savedContacts
             });
         } else {
+            console.log("second")
             // If existing contacts found, return an error message
             return res.status(409).send({
                 success: false,
@@ -52,6 +54,7 @@ export const saveimportedcontacts = async (req, res) => {
             });
         }
     } catch (error) {
+        console.log("third")
         console.error('Error while saving contacts:', error);
         res.status(500).json({ error: 'Failed to save contacts.' });
     };
