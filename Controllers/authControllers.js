@@ -2,10 +2,13 @@ import userModel from '../Models/userModel.js';
 import { comparePassword, hashPassword } from "../Helper/authHelper.js";
 import JWT from "jsonwebtoken";
 import tabsModel from '../Models/tabsModel.js';
+import PlansModel from '../Models/PlansModel.js';
 
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, selectedPlan } = req.body;
+        // console.log(selectedPlan, "upper plan")
+        let planId = selectedPlan._id;
         //validations
         if (!name) {
             return res.send({ error: "Name is Required" });
@@ -16,22 +19,37 @@ export const registerController = async (req, res) => {
         if (!password) {
             return res.send({ message: "Password is Required" });
         }
+        if (!selectedPlan) {
+            return res.send({ message: "plan is required to continue" });
+        }
+
         //check user
         const exisitingUser = await userModel.findOne({ email });
+
         //exisiting user
         if (exisitingUser) {
+            console.log(exisitingUser, "exisitingUser")
             return res.status(200).send({
                 success: false,
                 message: "Already Register please login",
             });
         }
-        //register user
+        const exisitingPlan = await PlansModel.findById(planId);
+
+        if (!exisitingPlan) {
+            return res.status(202).send({
+                success: false,
+                message: "Plan Doesn't exists",
+            })
+        }
+        console.log(exisitingPlan, "plannnn")
         const hashedPassword = await hashPassword(password);
-        //save
+        // save
         const user = await new userModel({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            plan: exisitingPlan._id
         }).save();
 
         const predefinedTabs = [
@@ -192,12 +210,13 @@ export const registerController = async (req, res) => {
             }).save();
             console.log(tab);
         }
-
+        // }
         // Respond with registration success
         res.status(201).send({
             success: true,
             message: "User Register Successfully",
             user,
+            // plan,
             predefinedTabs
         });
     } catch (error) {
@@ -247,7 +266,9 @@ export const loginController = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                // plan: user.plan
             },
+            plan: user.plan,
             token,
         });
     } catch (error) {

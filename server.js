@@ -8,6 +8,7 @@ import tabsRoute from './Routes/tabsRoute.js';
 import reminderRoute from './Routes/reminderRoute.js';
 import contactRoute from './Routes/contactRoute.js';
 import adminRoute from './Routes/adminRoute.js';
+import planRoute from './Routes/planRoute.js';
 import cors from 'cors';
 import * as cron from 'node-cron';
 import { sendNotification } from './notification-schedular.js';
@@ -36,6 +37,7 @@ app.use(morgan('dev'));
 //routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/plans", planRoute);
 app.use("/api/v1/tasks", taskRoute);
 app.use("/api/v1/tabs", tabsRoute);
 app.use("/api/v1/reminder", reminderRoute);

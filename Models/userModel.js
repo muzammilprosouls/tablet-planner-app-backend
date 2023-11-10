@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
         DOB: {
             type: Date,
         },
-        plans: {
+        plan: {
             type: mongoose.ObjectId,
             ref: "Plans",
         },

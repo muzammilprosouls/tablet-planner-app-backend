@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 const PlanSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
+        description: {
+            type: String,
+        },
         is_Paid: Boolean,
         monthly_price: {
             type: String
@@ -10,7 +13,13 @@ const PlanSchema = new mongoose.Schema(
         yearly_price: {
             type: String
         },
-        services: [String]
+        services: [
+            {
+                predefinedTabs: Boolean,
+                customTabs: Boolean,
+                reminder: Boolean
+            }
+        ]
     },
     { timestamps: true }
 );
