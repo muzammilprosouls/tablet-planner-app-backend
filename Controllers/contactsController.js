@@ -1,13 +1,15 @@
 import contactModel from "../Models/contactModel.js";
 import userModel from "../Models/userModel.js";
+
 export const saveimportedcontacts = async (req, res) => {
     try {
         const contacts = req.body.savecontacts;
+        // console.log(contacts, "contacts")
         const userId = req.user._id;
         const existingContacts = await contactModel.find({ person: userId });
         const filteredContacts = contacts.filter(contact => {
             return existingContacts.every(existingContact =>
-                contact.lookupKey !== existingContact.contactId
+                contact.lookupKey || contact.id !== existingContact.contactId
             );
         });
         const concatenateAddressFields = (address) => {
@@ -23,7 +25,7 @@ export const saveimportedcontacts = async (req, res) => {
 
         // Add userId to each contact object
         if (filteredContacts.length > 0) {
-            console.log("first")
+            // console.log("first")
             const contactsWithUserId = filteredContacts.map(contact => {
                 const addresses = Array.isArray(contact.addresses)
                     ? contact.addresses.map(address => ({
@@ -46,7 +48,7 @@ export const saveimportedcontacts = async (req, res) => {
                 savedContacts
             });
         } else {
-            console.log("second")
+            // console.log("second")
             // If existing contacts found, return an error message
             return res.status(409).send({
                 success: false,
@@ -54,7 +56,7 @@ export const saveimportedcontacts = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log("third")
+        // console.log("third")
         console.error('Error while saving contacts:', error);
         res.status(500).json({ error: 'Failed to save contacts.' });
     };

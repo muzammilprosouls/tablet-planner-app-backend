@@ -32,6 +32,7 @@ app.use(cors(
 ));
 app.use(express.json());
 app.use(morgan('dev'));
+app.use('/assets', express.static('assets'));
 // app.use(express.static(path.join(__dirname, './client/build')))
 
 //routes
@@ -50,6 +51,8 @@ app.use("/api/v1/contact", contactRoute);
 app.get('/', (req, res) => {
     res.send("<h1>Welcome to Tablet Planner app</h1>");
 });
+
+
 
 // Query reminders from MongoDB where notification time matches the current time
 const job = cron.schedule('* * * * *', async () => {
